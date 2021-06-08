@@ -2,16 +2,12 @@
 /* Copyright (C) 2019 Western Digital Corporation or its affiliates */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <ctype.h>
 #include <endian.h>
 #include <errno.h>
-#include <stdint.h>
 #include <stdbool.h>
 
 #include "ufs.h"
@@ -239,7 +235,6 @@ struct desc_field_offset device_health_desc_conf_field_name[] = {
 
 struct query_err_res {
 	char *name;
-	__u8 opcode;
 };
 
 struct attr_fields ufs_attrs[] = {
@@ -354,8 +349,7 @@ int do_read_desc(int fd, struct ufs_bsg_request *bsg_req,
 static int do_unit_desc(int fd, __u8 lun);
 static int do_power_desc(int fd);
 static int do_conf_desc(int fd, __u8 opt, __u8 index, char *data_file);
-static int do_string_desc(int fd, char *str_data, __u8 idn, __u8 opr,
-			__u8 index);
+static int do_string_desc(int fd, char *str_data, __u8 opr, __u8 index);
 int do_query_rq(int fd, struct ufs_bsg_request *bsg_req,
 			struct ufs_bsg_reply *bsg_rsp, __u8 query_req_func,
 			__u8 opcode, __u8 idn, __u8 index, __u8 sel,
@@ -755,8 +749,7 @@ static void create_str_desc_data(__u8 *dest_buf, const char *str, __u8 len)
 	}
 }
 
-static int do_string_desc(int fd, char *str_data, __u8 idn, __u8 opr,
-			__u8 index)
+static int do_string_desc(int fd, char *str_data, __u8 opr, __u8 index)
 {
 	int rc = 0;
 	__u8 data_buf[QUERY_DESC_STRING_MAX_SIZE] = {0};
@@ -930,8 +923,7 @@ int do_desc(struct tool_options *opt)
 		rc = do_power_desc(fd);
 		break;
 	case QUERY_DESC_IDN_STRING:
-		rc = do_string_desc(fd, (char *)opt->data, opt->idn, opt->opr,
-				opt->index);
+		rc = do_string_desc(fd, (char *)opt->data, opt->opr, opt->index);
 		break;
 	case QUERY_DESC_IDN_HEALTH:
 		rc = do_health_desc(fd);

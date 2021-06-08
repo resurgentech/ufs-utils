@@ -63,18 +63,17 @@ static inline void put_unaligned_be24(__u32 val, void *p)
 	((__u8 *)p)[2] = val & 0xff;
 }
 
+
+#ifdef DEBUG
 static int write_file_with_counter(const char *pattern, const void *buffer,
 			int length)
 {
-#ifdef DEBUG
 	static int counter = 1;
 	char filename[1024] = {0};
 	sprintf(filename, pattern, counter++);
 	return write_file(filename, buffer, length);
-#else
-	return 0;
-#endif
 }
+#endif
 
 int write_buffer(int fd, __u8 *buf, __u8 mode, __u8 buf_id, __u32 buf_offset,
 		int byte_count, __u8 sg_type)
@@ -258,8 +257,10 @@ static int send_scsi_cmd(int fd, const __u8 *cdb, void *buf, __u8 cmd_len,
 	WRITE_LOG("Start : %s cmd = %x len %d sg_type %d\n", __func__, cdb[0],
 			byte_cnt, sg_type);
 
+#ifdef DEBUG
 	write_file_with_counter("scsi_cmd_cdb_%d.bin",
 			cdb, cmd_len);
+#endif
 
 	while (((ret = ioctl(fd, SG_IO, sg_struct)) < 0) &&
 		((errno == EINTR) || (errno == EAGAIN)));
@@ -341,10 +342,11 @@ int send_bsg_scsi_trs(int fd, struct ufs_bsg_request *request_buff,
 		request_buff->upiu_req.qr.idn, req_buf_len,
 		reply_buf_len);
 
+#ifdef DEBUG
 	write_file_with_counter("bsg_reg_%d.bin",
 				&request_buff->upiu_req,
 				sizeof(struct utp_upiu_req));
-
+#endif
 
 	while (((ret = ioctl(fd, SG_IO, &io_hdr_v4)) < 0) &&
 		((errno == EINTR) || (errno == EAGAIN)))
@@ -357,8 +359,10 @@ int send_bsg_scsi_trs(int fd, struct ufs_bsg_request *request_buff,
 		ret = -EINVAL;
 	}
 
+#ifdef DEBUG
 	write_file_with_counter("bsg_rsp_%d.bin", reply_buff,
 			BSG_REPLY_SZ);
+#endif
 
 	WRITE_LOG("%s res_len %d\n", __func__,
 		reply_buff->reply_payload_rcv_len);

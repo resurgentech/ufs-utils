@@ -127,7 +127,7 @@ out:
 
 }
 
-static int check_ffu_status(int fd, struct tool_options *opt)
+static int check_ffu_status(int fd)
 {
 	int rc = ERROR;
 	__u8 dev_desc[QUERY_DESC_DEVICE_MAX_SIZE] = {0};
@@ -181,7 +181,7 @@ int do_ffu(struct tool_options *opt)
 		rc = flash_ffu(fd, opt);
 		break;
 	case UFS_CHECK_FFU_STATUS:
-		rc = check_ffu_status(fd, opt);
+		rc = check_ffu_status(fd);
 		break;
 	default:
 		print_error("Unsupported FFU type operation");

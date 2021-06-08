@@ -25,7 +25,7 @@ objects = \
 	ufs_rpmb.o \
 	ufs_hmr.o
 
-CHECKFLAGS = -Wall  -Wundef -Wno-missing-braces
+CHECKFLAGS = -Wall  -Wundef -Wno-missing-braces -Wpedantic
 
 DEPFLAGS = -Wp,-MMD,$(@D)/.$(@F).d,-MT,$@
 override CFLAGS := $(CHECKFLAGS) $(AM_CFLAGS) $(CFLAGS) $(INC_DIR) $(CXXFLAGS)

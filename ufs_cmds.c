@@ -235,6 +235,7 @@ struct desc_field_offset device_health_desc_conf_field_name[] = {
 
 struct query_err_res {
 	char *name;
+	__u8 opcode;
 };
 
 struct attr_fields ufs_attrs[] = {
@@ -491,7 +492,8 @@ static void query_response_error(__u8 opcode, __u8 idn)
 {
 	__u8 query_response_inx = opcode & 0x0F;
 
-	printf("\n %s, for idn 0x%02x\n",
+	printf("\nopcode 0x%02x - %s, for idn 0x%02x\n",
+		query_err_status[query_response_inx].opcode,
 		query_err_status[query_response_inx].name, idn);
 }
 
@@ -1246,6 +1248,8 @@ int do_flags(struct tool_options *opt)
 				opcode = UPIU_QUERY_OPCODE_SET_FLAG;
 			else if (opt->opr == TOGGLE_FLAG)
 				opcode = UPIU_QUERY_OPCODE_TOGGLE_FLAG;
+			else
+				opcode = 0;
 			rc = do_query_rq(fd, &bsg_req, &bsg_rsp,
 					UPIU_QUERY_FUNC_STANDARD_WRITE_REQUEST,
 					opcode, opt->idn, opt->index,

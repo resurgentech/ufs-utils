@@ -4,14 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <endian.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdint.h>
-#include <errno.h>
 
 #include "ufs.h"
 #include "ufs_cmds.h"
@@ -46,24 +42,19 @@ ffu_status_string(enum ffu_status_type status)
 	switch (status) {
 	case NO_INFORMATION:
 		return "NO INFORMATION";
-	break;
 	case SUCCESSFUL_MICROCODE_UPDATE:
 		return "SUCCESSFUL MICROCODE UPDATE";
-	break;
 	case INTERNAL_ERROR:
 		return "INTERNAL ERROR";
-	break;
 	case MICROCODE_CORRUPTION_ERROR:
 		return "MICROCODE CORRUPTION ERROR";
-	break;
+	case MICROCODE_VERSION_MISMATCH:
+		return "MICROCODE VERSION MISMATCH ERROR";
 	case GENERAL_ERROR:
 		return "GENERAL ERROR";
-	break;
 	default:
 		return "UNSUPPORTED STATUS";
-	break;
 	}
-	return 0;
 }
 
 static int flash_ffu(int fd, struct tool_options *opt)

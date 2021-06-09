@@ -1,12 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 /* Copyright (C) 2019 Western Digital Corporation or its affiliates */
 
-#include <stdlib.h>
 #include <stdio.h>
-#include <stdint.h>
 #include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <endian.h>
 #include <fcntl.h>
 #include <string.h>
@@ -260,7 +256,7 @@ static inline void hmr_query_error(int rc,
 {
 	print_error("hmr: query command: %s %s failed: "
 		"opcode 0x%x, field-name %s, field-idn 0x%x, rc %d.\n",
-		job_type, subject, opcode, field_name, field_idn);
+		job_type, subject, opcode, field_name, field_idn, rc);
 }
 
 static inline int hmr_attr_sanity(enum attr_idn idn)
@@ -1100,7 +1096,7 @@ int do_hmr(struct tool_options *opt)
 	__u32 refresh_totcount;
 	enum hmr_stage_skip stage_passer = 0;
 
-	if (!opt || !opt->path)
+	if (!opt)
 		return -EHMR_INVAL;
 
 	/* Open dev in subject */
